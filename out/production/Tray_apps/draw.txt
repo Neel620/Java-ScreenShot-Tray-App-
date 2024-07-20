@@ -1,0 +1,241 @@
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+public class draw extends JFrame
+{
+
+    BufferedImage he,im;
+   // PointerInfo d=MouseInfo.getPointerInfo();
+    static int x,y,x1,y1,w,h,flag,m1,m3;
+    tray1 t=new tray1();
+
+    public draw(BufferedImage b)
+
+    {
+        he=null;
+        he=b;
+        setBounds(0,0,1366,768);
+        setLayout(new FlowLayout());
+        setUndecorated (true);
+        setVisible(true);
+
+
+        addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                x=e.getX();
+                y=e.getY();
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+
+                x1=e.getX();
+                y1=e.getY();
+                w=x1-x;
+                h=y1-y;
+                flag=1;
+                repaint();
+
+
+                ///////////////////////////////////////////////////////
+
+                int ans= JOptionPane.showConfirmDialog(null,"Do you want to save the screenshot?","confirm",JOptionPane.YES_NO_OPTION);
+
+                if(ans==0)
+                {
+
+                    if(t.path1==null)
+                    {
+
+                        JFileChooser jf = new JFileChooser();
+
+                        jf.showSaveDialog(null);
+
+                        try
+                        {
+                            File bw=jf.getSelectedFile();
+
+                            try
+                            {
+                                t.path = bw.toString();
+
+                                t.ind = t.path.indexOf('.');
+                                t.sub = t.path.substring(t.ind);
+
+
+                                if(!t.isValid(t.sub))
+                                {
+                                    JOptionPane.showMessageDialog(null,"Invalid Extension !");
+                                    dispose();
+                                    extensions r=new extensions();
+
+                                }
+
+                                else if (t.path != null && t.isValid(t.sub) )
+                                {
+
+                                    ImageIO.write(im, "jpg", new File(t.path));
+                                    JOptionPane.showMessageDialog(null, "Screenshot saved to the selected path !");
+
+                                    dispose();
+
+                                }
+
+                                else
+                                {
+                                    JOptionPane.showMessageDialog(null, "Screenshot was not saved !");
+
+                                    dispose();
+                                }
+
+
+                            }
+                            catch(Exception c)
+                            {
+                                dispose();
+                            }
+
+
+
+
+                        }
+
+                        catch (Exception ee)
+                        {
+
+                            ee.printStackTrace();
+                        }
+
+                    }
+
+                    else if(t.path1!= null)
+                    {
+
+                        t.name=JOptionPane.showInputDialog(null,"Enter name with extension(.jpg/.png..)");
+
+                        try
+                        {
+                            t.ind = t.name.indexOf('.');
+
+                            t.sub = t.name.substring(t.ind);
+                        }
+                        catch (Exception er)
+                        {
+
+                            dispose();
+                        }
+
+                        if(t.name.indexOf('.')==-1)
+                        {
+                            dispose();
+                        }
+
+                        if(t.name==null)
+                        {
+                            dispose();
+                        }
+
+                        else
+                        {
+
+                            if(t.isValid(t.sub))
+                            {
+
+                                t.final_path = t.path1 + "\\" + t.name;
+                                System.out.println(t.final_path);
+                                try
+                                {
+                                    ImageIO.write(im, "jpg", new File(t.final_path));
+                                }
+                                catch (Exception ee)
+                                {
+                                    ee.printStackTrace();
+                                }
+                                JOptionPane.showMessageDialog(null, "Screenshot saved to the given path !");
+                                dispose();
+
+                            }
+                            else
+                            {
+                                JOptionPane.showMessageDialog(null, "Invalid extension!");
+                                dispose();
+                                extensions ee=new extensions();
+
+
+                            }
+                        }
+
+
+                    }
+
+
+                }
+                else
+                {
+                    dispose();
+
+                }
+
+
+                ///////////////////////////////////////////////////////
+            }
+
+        });
+
+    }
+
+
+    @Override
+    public void paint(Graphics g)
+    {
+
+        g.drawImage(he,0,0,null);
+        g.setColor(Color.RED);
+        Graphics2D g2d = (Graphics2D) g.create();
+        Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
+        g2d.setStroke(dashed);
+        w=x1-x;
+        h=y1-y;
+        m1=(x+x1)/2;
+        m3=(y+y1)/2;
+        if(flag!=1)
+        {
+            x=y=x1=y1=w=h=0;
+        }
+
+        if(flag==1)
+        {
+
+            g2d.drawRect(x, y, w, h);
+            g.setColor(Color.black);
+            g.fillOval(m1,y-5,13,13);
+            g.fillOval(m1,y1-5,13,13);
+            g.fillOval(x-5,m3,13,13);
+            g.fillOval(x1-5,m3,13,13);
+
+
+            try
+            {
+                im = he.getSubimage(x, y, w, h);
+            }
+            catch (Exception ss)
+            {
+                //JOptionPane.showMessageDialog(null,"1");
+                System.out.println("x="+x+"y="+y+"w="+w+"h="+h);
+            }
+
+            x=y=w=h=x1=y1=0;
+        }
+
+    }
+}

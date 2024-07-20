@@ -1,0 +1,82 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class extensions {
+  static  String ch;
+  static  String txt;
+  public JFrame f;
+
+    public extensions() {
+        tray1 t=new tray1();
+
+        f = new JFrame();
+        f.setResizable(false);
+        f.setTitle("Screenshooter");
+        Image img= Toolkit.getDefaultToolkit().getImage("C:\\Users\\Deep\\Desktop\\sc.jpg");
+        f.setIconImage(img);
+        JLabel l = new JLabel("Select Extension");
+        l.setBounds(20,20,100,40);
+        JLabel l2 = new JLabel("Not selected");
+        l2.setBounds(20,100,100,40);
+
+        List li=new List();
+        li.setBounds(150,20,150,70);
+        JButton bs=new JButton("Select extension");
+        bs.setBounds(350,20,150,20);
+
+        JButton b=new JButton("Save");
+        b.setBounds(350,60,150,20);
+
+        li.add("jpg");
+        li.add("png");
+        li.add("jpeg");
+        li.add("tif");
+        li.add("tiff");
+        li.add("gif");
+        li.add("eps");
+        li.add("bmp");
+        li.add("raw");
+
+
+        f.setBounds(100, 100, 540, 300);
+        f.add(l);
+        f.add(bs);
+        f.add(li);
+        f.add(l2);
+        f.add(b);
+
+        f.setLayout(null);
+        f.setVisible(true);
+
+
+        bs.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ch=li.getSelectedItem();
+                l2.setText(ch+' '+"selected");
+
+            }
+        });
+
+        b.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ch=li.getSelectedItem();
+                 txt=ch;
+                JOptionPane.showMessageDialog(null,"Extension saved!");
+                new tray1(txt);
+                f.dispose();
+            }
+        });
+
+    }
+
+
+
+}

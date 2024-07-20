@@ -1,0 +1,228 @@
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.SystemTray;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+
+public class tray1 extends Frame
+{
+
+    Robot r=null;
+    Rectangle area=null;
+    String path1,path;
+
+
+
+    public tray1() throws NullPointerException
+
+    {
+
+        JFrame frame = new JFrame();
+        frame.setBounds(0,0,1500,1000);
+
+
+        if(SystemTray.isSupported())
+        {
+            System.out.println("Supported !");
+        }
+
+        else
+        {
+            System.out.println("Not supported !");
+        }
+
+
+        SystemTray st= SystemTray.getSystemTray();
+        Image img= Toolkit.getDefaultToolkit().getImage("C:\\Users\\Deep\\Desktop\\sc.jpg");
+
+        PopupMenu pm=new PopupMenu();
+        MenuItem a=new MenuItem("Screenshot");
+        MenuItem ex=new MenuItem("Exit");
+        MenuItem m1=new MenuItem("Set path");
+        MenuItem m2=new MenuItem("Clear path");
+        Menu Sc=new Menu("Path");
+        Sc.add(m1);
+        Sc.add(m2);
+
+
+        ex.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
+            }
+        });
+
+        m1.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                path1=JOptionPane.showInputDialog(null,"Enter path");
+                System.out.println(path1);
+                JOptionPane.showMessageDialog(null,"Path set! Screenshots will be saved to the given path");
+            }
+        });
+
+        m2.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+
+                path1=null;
+                JOptionPane.showMessageDialog(null,"Path Cleared !");
+            }
+        });
+
+
+        a.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    r = new Robot();
+
+                }
+                catch(Exception a)
+                {
+                    a.printStackTrace();
+                }
+
+
+
+                area = new Rectangle(0, 2, 1366, 768);
+                BufferedImage b = r.createScreenCapture(area);
+
+                ImageIcon imageIcon = new ImageIcon(b);
+
+                JLabel a  ;
+
+                a=new JLabel("",imageIcon,JLabel.CENTER);
+                a.setBounds(0,0,1366,768);
+
+                frame.setLayout(null);
+                frame.add(a);
+                frame.setVisible(true);
+
+                int ans= JOptionPane.showConfirmDialog(null,"Do you want to save the screenshot?","confirm",JOptionPane.YES_NO_OPTION);
+
+                if(ans==0)
+                {
+
+                    if(path1==null)
+                    {
+                        System.out.println("P="+path1);
+
+
+                            JFileChooser jf = new JFileChooser();
+
+                            jf.showSaveDialog(null);
+
+                        try
+                        {
+                            File bw = jf.getSelectedFile();
+                            String path = bw.toString();
+                            if(jf.APPROVE_OPTION==0)
+                            {
+
+                                if (path != null) {
+                                    ImageIO.write(b, "jpg", new File(path));
+                                    JOptionPane.showMessageDialog(null, "Screenshot saved to the selected path !");
+                                    a.setIcon(null);
+                                    frame.dispose();
+                                }
+                            }
+                            else
+                            {
+                                        JOptionPane.showMessageDialog(null, "Screenshot was not saved !");
+                                        a.setIcon(null);
+                                        System.exit(0);
+                                        frame.dispose();
+                            }
+
+
+
+                        }
+
+                        catch (Exception ee)
+                        {
+                            ee.printStackTrace();
+                        }
+
+                    }
+                    else if(path1!= null)
+                    {
+                        String name;
+                        String final_path;
+                        name=JOptionPane.showInputDialog(null,"Enter name with extension(.jpg/.png..)");
+                        if(name==null)
+                        {
+                            frame.dispose();
+                        }
+                        else
+                            {
+                            final_path = path1 + "\\" + name;
+                            System.out.println(final_path);
+                            try {
+                                ImageIO.write(b, "jpg", new File(final_path));
+                            } catch (Exception ee) {
+                                ee.printStackTrace();
+                            }
+                            JOptionPane.showMessageDialog(null, "Screenshot saved to the given path !");
+                            a.setIcon(null);
+                            frame.dispose();
+                        }
+
+
+                    }
+
+
+                }
+                else
+                {
+                    frame.dispose();
+                    a.setIcon(null);
+
+                }
+
+            }
+
+        });
+
+
+
+        pm.add(a);
+        pm.add(ex);
+        pm.add(Sc);
+
+
+        TrayIcon ti=new TrayIcon(img,"Screenshooter",pm);
+        ti.setImageAutoSize(true);
+        try
+        {
+            st.add(ti);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
+    public static void main(String[] args) {
+        tray1 t=new tray1();
+
+
+    }
+}

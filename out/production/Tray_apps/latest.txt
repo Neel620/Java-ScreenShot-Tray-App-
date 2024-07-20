@@ -1,0 +1,463 @@
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.SystemTray;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.nio.file.*;
+
+
+public class tray1 extends Frame
+{
+
+   static Robot r=null;
+   static Rectangle area=null;
+   static TrayIcon ti;
+   static  private String path1,path,only_name,final_path,name,sub;
+   int ind,flag=0;
+   String ck=null;
+   static JLabel a;
+   static BufferedImage b;
+   static ImageIcon imageIcon;
+   String []ext={".jpg",".png",".jpeg",".bmp",".tif",".tiff",".gif",".eps",".raw"};
+
+
+
+    public tray1() throws NullPointerException
+
+    {
+
+        JFrame frame = new JFrame();
+        frame.setTitle("Screenshooter");
+        Image img= Toolkit.getDefaultToolkit().getImage("C:\\Users\\Deep\\Desktop\\sc.jpg");
+        frame.setIconImage(img);
+        frame.setBounds(0,0,1500,1000);
+
+
+        if(! SystemTray.isSupported())
+        {
+            JOptionPane.showMessageDialog(null,"System tray is not supported to your machine !");
+        }
+
+
+        SystemTray st= SystemTray.getSystemTray();
+
+
+
+        PopupMenu pm=new PopupMenu();
+        MenuItem af=new MenuItem("Screenshot");
+        MenuItem ex=new MenuItem("Exit");
+        MenuItem m1=new MenuItem("Set path");
+        MenuItem m2=new MenuItem("Clear path");
+        MenuItem m3=new MenuItem("About");
+
+        Menu Sc=new Menu("Path");
+        Sc.add(m1);
+        Sc.add(m2);
+
+
+        ex.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.exit(0);
+            }
+        });
+
+
+
+        m1.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+
+                System.out.println(path1);
+                if(flag==0)
+                {
+                        ck = JOptionPane.showInputDialog(null, " Enter a correct path");
+                        if(ck==null)
+                        {
+                            JOptionPane.showMessageDialog(null, "Invalid path !");
+                            ck = JOptionPane.showInputDialog(null, " Enter a correct path");
+
+                        }
+                        else
+                            {
+                            flag = 1;
+                            path1 = ck;
+                            JOptionPane.showMessageDialog(null, "Path set! Screenshots will be saved to the given path");
+                          }
+
+
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null,"Path already set! Clear it and enter new one");
+                }
+
+            }
+        });
+
+        m2.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+
+                path1=null;
+                flag=0;
+                JOptionPane.showMessageDialog(null,"Path Cleared !");
+
+            }
+        });
+
+
+        m3.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+
+                JOptionPane.showMessageDialog(null,"Coded by Neel Huzurbazar !");
+            }
+        });
+
+
+        af.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    r = new Robot();
+
+                }
+                catch(Exception a)
+                {
+                    a.printStackTrace();
+                }
+
+
+
+                area = new Rectangle(0, 2, 1366, 768);
+                 b = r.createScreenCapture(area);
+
+                 imageIcon = new ImageIcon(b);
+
+                //JLabel a  ;
+                a=new JLabel("",null,JLabel.CENTER);
+                a=new JLabel("",imageIcon,JLabel.CENTER);
+                a.setBounds(0,0,1366,768);
+
+                frame.setLayout(null);
+                frame.add(a);
+                frame.setVisible(true);
+
+                int ans= JOptionPane.showConfirmDialog(null,"Do you want to save the screenshot?","confirm",JOptionPane.YES_NO_OPTION);
+
+                if(ans==0)
+                {
+
+                    if(path1==null)
+                    {
+
+                            JFileChooser jf = new JFileChooser();
+
+                            jf.showSaveDialog(null);
+
+                        try
+                        {
+                            File bw=jf.getSelectedFile();
+
+                                    try
+                                    {
+                                        path = bw.toString();
+
+                                        ind = path.indexOf('.');
+                                        sub = path.substring(ind);
+
+
+                                        if(!isValid(sub))
+                                        {
+                                            JOptionPane.showMessageDialog(null,"Invalid Extension !");
+                                            frame.dispose();
+                                            extensions r=new extensions();
+
+                                        }
+
+                                        else if (path != null && isValid(sub) )
+                                        {
+
+                                            ImageIO.write(b, "jpg", new File(path));
+                                            JOptionPane.showMessageDialog(null, "Screenshot saved to the selected path !");
+                                            a.setIcon(null);
+                                            frame.dispose();
+
+                                        }
+
+                                        else
+                                        {
+                                            JOptionPane.showMessageDialog(null, "Screenshot was not saved !");
+                                            a.setIcon(null);
+                                            frame.dispose();
+                                        }
+
+
+                                    }
+                                    catch(Exception c)
+                                    {
+                                        frame.dispose();
+                                    }
+
+
+
+
+                        }
+
+                        catch (Exception ee)
+                        {
+
+                            ee.printStackTrace();
+                        }
+
+                    }
+
+                    else if(path1!= null)
+                    {
+
+                        name=JOptionPane.showInputDialog(null,"Enter name with extension(.jpg/.png..)");
+
+                            try
+                            {
+                               ind = name.indexOf('.');
+
+                                sub = name.substring(ind);
+                            }
+                            catch (Exception er)
+                            {
+
+                               frame.dispose();
+                            }
+
+                            if(name.indexOf('.')==-1)
+                            {
+                                frame.dispose();
+                            }
+
+                            if(name==null)
+                            {
+                                frame.dispose();
+                            }
+
+                            else
+                            {
+
+                                 if(isValid(sub))
+                                 {
+
+                                         final_path = path1 + "\\" + name;
+                                         System.out.println(final_path);
+                                         try
+                                         {
+                                             ImageIO.write(b, "jpg", new File(final_path));
+                                         }
+                                         catch (Exception ee)
+                                         {
+                                             ee.printStackTrace();
+                                         }
+                                         JOptionPane.showMessageDialog(null, "Screenshot saved to the given path !");
+                                         a.setIcon(null);
+                                         frame.dispose();
+
+                                 }
+                                 else
+                                 {
+                                     JOptionPane.showMessageDialog(null, "Invalid extension!");
+                                     frame.dispose();
+                                     extensions ee=new extensions();
+
+
+                                 }
+                            }
+
+
+                    }
+
+
+                }
+                else
+                {
+                    frame.dispose();
+                    a.setIcon(null);
+
+                }
+
+            }
+
+        });
+
+
+
+
+
+        pm.add(af);
+        pm.add(ex);
+        pm.add(Sc);
+        pm.add(m3);
+
+
+         ti=new TrayIcon(img,"Screenshooter",pm);
+        ti.setImageAutoSize(true);
+        try
+        {
+            st.add(ti);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+
+    }
+
+    public static void main(String[] args)
+    {
+
+        tray1 t=new tray1();
+
+    }
+
+    public boolean isValid(String p) throws IndexOutOfBoundsException
+    {
+             int a=0;
+
+           for(int i=0;i<=ext.length-1;i++)
+           {
+               if(ext[i].equals(sub))
+               {
+                    a=1;
+               }
+
+           }
+           if(a==1)
+           {
+               return  true;
+           }
+
+           else
+           {
+
+               return false;
+           }
+
+    }
+
+    public static boolean isPathValid(String path)
+    {
+
+        try
+        {
+            File f=new File(path);
+            f.getAbsolutePath();
+            return true;
+
+        }
+        catch (InvalidPathException ex)
+        {
+            return false;
+        }
+
+
+    }
+
+    public tray1(String ae)
+    {
+
+
+
+
+
+        if(ae!=" ")
+        {
+
+            if(!(name==(null) ) )
+            {
+                    try
+                    {
+                        if(name.contains("."))
+                        {
+                            name=name.substring(0,name.indexOf('.'));
+                            final_path = path1 + "\\" +  name + '.' + ae;
+
+                        }
+
+                        else
+                        {
+                            final_path = path1 + "\\" +  name + '.' + ae;
+
+                        }
+
+                     }
+                    catch (Exception d)
+                      {
+                        JOptionPane.showMessageDialog(null,"Error saving screenshot!");
+                      }
+
+                    try
+                    {
+                        ImageIO.write(b,"jpg", new File(final_path));
+                        a.setIcon(null);
+                    }
+
+                    catch (Exception ee)
+                    {
+                      JOptionPane.showMessageDialog(null,"Error saving screenshot!");
+                    }
+
+                    JOptionPane.showMessageDialog(null, "Screenshot saved to the given path !");
+
+
+            }
+            else if(!(path==(null)) )
+            {
+
+                try
+                {
+                        path=path.substring(0,path.indexOf('.'));
+                        final_path = path + '.' + ae;
+
+                }
+                catch (Exception d)
+                {
+                    JOptionPane.showMessageDialog(null,"Error");
+                }
+
+                try
+                {
+                    ImageIO.write(b,"jpg", new File(final_path));
+                    a.setIcon(null);
+                    JOptionPane.showMessageDialog(null, "Screenshot saved to the given path !");
+
+                }
+
+                catch (Exception ee)
+                {
+                    JOptionPane.showMessageDialog(null,"Error saving screenshot!");
+                }
+
+
+            }
+        }
+
+
+    }
+
+
+}

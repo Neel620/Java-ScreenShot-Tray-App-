@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Tray_apps:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Tray_apps_jar</output-path>
+    <root id="archive" name="Tray_apps.jar">
+      <element id="module-output" name="Tray_apps" />
+    </root>
+  </artifact>
+</component>
